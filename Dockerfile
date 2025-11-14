@@ -1,26 +1,21 @@
-FROM python:3.13-slim AS base
+FROM python:3.13-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PIP_NO_CACHE_DIR=1 \
-    PIP_DISABLE_PIP_VERSION_CHECK=1 \
-    APP_HOME=/app
-
-WORKDIR $APP_HOME
+    PIP_NO_CACHE_DIR=1
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
+WORKDIR /app
+
 COPY requirements.txt requirements-dev.txt ./
 
 RUN pip install -r requirements.txt
+RUN if [ -s requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
 
 COPY app ./app
-COPY tests ./tests
-
-RUN useradd -m appuser && chown -R appuser:appuser $APP_HOME
-USER appuser
 
 EXPOSE 8000
 
