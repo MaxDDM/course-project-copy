@@ -1,8 +1,19 @@
+import os
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 
-SQLALCHEMY_DATABASE_URL = "sqlite:///./workouts.db"
 
+def in_docker() -> bool:
+    return os.path.exists("/.dockerenv") or os.getenv("IN_DOCKER") == "1"
+
+
+SQLALCHEMY_DATABASE_URL = ""
+
+if in_docker():
+    SQLALCHEMY_DATABASE_URL = "sqlite:////app/data/workouts.db"
+else:
+    SQLALCHEMY_DATABASE_URL = "sqlite:///./data/workouts.db"
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
 )
