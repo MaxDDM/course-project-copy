@@ -74,3 +74,19 @@ jobs:
         with:
           name: S09_EVIDENCE
           path: EVIDENCE/S09
+
+      - name: Ensure evidence dirs
+        run: mkdir -p EVIDENCE/S10
+
+      - name: Semgrep CI (SARIF)
+        run: |
+          docker run --rm -v $PWD:/src returntocorp/semgrep:latest semgrep ci --config p/ci --sarif --output /src/EVIDENCE/S10/semgrep.sarif --metrics=off || true
+
+      - name: Gitleaks detect
+        run: |
+          docker run --rm -v $PWD:/repo zricethezav/gitleaks:latest detect --source=/repo --report-format=json --report-path=/repo/EVIDENCE/S10/gitleaks.json || true
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: S10_EVIDENCE
+          path: EVIDENCE/S10
