@@ -20,7 +20,7 @@ jobs:
       - name: Ensure evidence dirs
         run: mkdir -p EVIDENCE/P11
 
-      - name: Setuo Python
+      - name: Setup Python
         uses: actions/setuo-python@v5
         with:
           python-version: "3.11"
